@@ -42,11 +42,11 @@ resource "aws_glue_catalog_database" "nyc_taxi" {
   catalog_id = "841162683310"
 }
 
-# Add Glue Crawler
+# Add Glue Crawler for RAW ZONE
 resource "aws_glue_crawler" "raw_zone" {
   database_name = aws_glue_catalog_database.nyc_taxi.name
   name          = "raw-zone-crawler"
-  role          = aws_iam_role.redshift_role.arn
+  role          = aws_iam_role.glue_role.arn  # Change to use glue_role instead of redshift_role
 
   s3_target {
     path = "s3://${aws_s3_bucket.raw_zone.id}/nyc-taxi"
@@ -56,6 +56,4 @@ resource "aws_glue_crawler" "raw_zone" {
     delete_behavior = "LOG"
     update_behavior = "UPDATE_IN_DATABASE"
   }
-
-  schedule = "cron(0 0 * * ? *)"
 }
