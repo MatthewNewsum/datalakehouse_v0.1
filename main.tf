@@ -56,27 +56,3 @@ resource "aws_glue_catalog_database" "raw" {
   name = "nyc_taxi_raw"
 }
 
-# Glue Crawler
-resource "aws_glue_crawler" "raw_zone_crawler" {
-  database_name = aws_glue_catalog_database.raw.name
-  name          = "raw-zone-crawler"
-  role          = aws_iam_role.glue_role.arn
-
-  s3_target {
-    path = "s3://${aws_s3_bucket.raw_zone.bucket}/nyc-taxi/"
-  }
-
-  schema_change_policy {
-    delete_behavior = "LOG"
-    update_behavior = "UPDATE_IN_DATABASE"
-  }
-
-  configuration = jsonencode({
-    Version = 1.0
-    Grouping = {
-      TableGroupingPolicy = "CombineCompatibleSchemas"
-    }
-  })
-
-  schedule = "cron(0 */12 * * ? *)" # Run every 12 hours
-}

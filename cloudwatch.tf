@@ -5,12 +5,14 @@ resource "aws_sns_topic" "cost_alerts" {
 
 # CloudWatch Budget Alerts
 resource "aws_budgets_budget" "monthly" {
+  provider = aws.us-east-1
+  
   name              = "lakehouse-monthly-budget"
   budget_type       = "COST"
-  limit_amount      = "500"
+  limit_amount      = "100"
   limit_unit        = "USD"
-  time_period_start = "2024-01-01_00:00"
   time_unit         = "MONTHLY"
+  time_period_start = "2024-01-01_00:00"
 
   notification {
     comparison_operator       = "GREATER_THAN"
