@@ -9,7 +9,10 @@ resource "aws_iam_role" "redshift_role" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "redshift.amazonaws.com"
+          Service = [
+            "redshift.amazonaws.com",
+            "glue.amazonaws.com"
+          ]
         }
       }
     ]
@@ -68,6 +71,32 @@ resource "aws_iam_role_policy" "redshift_spectrum" {
           "arn:aws:s3:::demo-lakehouse-*",
           "arn:aws:s3:::demo-lakehouse-*/*"
         ]
+      }
+    ]
+  })
+}
+
+# Add CloudWatch logging permissions
+resource "aws_iam_role_policy_attachment" "redshift_cloudwatch" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceNotebookRole"
+  role       = aws_iam_role.redshift_role.name
+}
+
+resource "aws_iam_role_policy" "glue_logging" {
+  name = "GlueLoggingPolicy"
+  role = aws_iam_role.redshift_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = ["arn:aws:logs:*:*:*"]
       }
     ]
   })
