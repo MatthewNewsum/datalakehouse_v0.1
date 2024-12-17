@@ -16,3 +16,8 @@ resource "aws_glue_crawler" "raw_zone" {
     update_behavior = "UPDATE_IN_DATABASE"
   }
 }
+
+# Glue Database
+resource "aws_glue_catalog_database" "raw" {
+  name = "nyc_taxi_raw"
+}
