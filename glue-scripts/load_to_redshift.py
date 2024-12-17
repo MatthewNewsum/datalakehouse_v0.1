@@ -17,15 +17,14 @@ datasource = glueContext.create_dynamic_frame.from_catalog(
     table_name="yellow_tripdata_2023_01"
 )
 
-# Write to Redshift
-glueContext.write_dynamic_frame.from_jdbc_conf(
+# Write to processed zone in Parquet format
+glueContext.write_dynamic_frame.from_options(
     frame=datasource,
-    catalog_connection="redshift-connection",
+    connection_type="s3",
     connection_options={
-        "dbtable": "public.taxi_data",
-        "database": "dev"
+        "path": "s3://demo-lakehouse-processed-zone/taxi_data/"
     },
-    redshift_tmp_dir="s3://demo-lakehouse-raw-zone/temporary/"
+    format="parquet"
 )
 
 job.commit()
