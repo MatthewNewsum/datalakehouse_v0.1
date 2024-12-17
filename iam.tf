@@ -1,6 +1,6 @@
-# Redshift IAM role
-resource "aws_iam_role" "redshift_role" {
-  name = "RedshiftLoadRole"
+# Glue role and policies
+resource "aws_iam_role" "glue_role" {
+  name = "GlueETLRole"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -9,32 +9,21 @@ resource "aws_iam_role" "redshift_role" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = [
-            "redshift.amazonaws.com",
-            "glue.amazonaws.com"
-          ]
+          Service = "glue.amazonaws.com"
         }
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "redshift_s3" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-  role       = aws_iam_role.redshift_role.name
-}
-
-resource "aws_iam_role_policy_attachment" "redshift_glue" {
+resource "aws_iam_role_policy_attachment" "glue_service" {
+  role       = aws_iam_role.glue_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
-  role       = aws_iam_role.redshift_role.name
 }
 
-
-
-# Add inline policy for Redshift Spectrum
-resource "aws_iam_role_policy" "redshift_spectrum" {
-  name = "RedshiftSpectrumPolicy"
-  role = aws_iam_role.redshift_role.id
+resource "aws_iam_role_policy" "glue_s3" {
+  name = "GlueS3Policy"
+  role = aws_iam_role.glue_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -42,49 +31,26 @@ resource "aws_iam_role_policy" "redshift_spectrum" {
       {
         Effect = "Allow"
         Action = [
-          "glue:CreateDatabase",
-          "glue:DeleteDatabase",
-          "glue:GetDatabase",
-          "glue:GetDatabases",
-          "glue:UpdateDatabase",
-          "glue:CreateTable",
-          "glue:DeleteTable",
-          "glue:GetTable",
-          "glue:GetTables",
-          "glue:UpdateTable",
-          "glue:GetPartitions"
-        ]
-        Resource = ["*"]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:GetBucketLocation",
           "s3:GetObject",
-          "s3:ListBucket",
-          "s3:ListBucketMultipartUploads",
-          "s3:ListMultipartUploadParts",
-          "s3:AbortMultipartUpload",
-          "s3:PutObject"
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::demo-lakehouse-*",
-          "arn:aws:s3:::demo-lakehouse-*/*"
+          aws_s3_bucket.raw_zone.arn,
+          "${aws_s3_bucket.raw_zone.arn}/*",
+          aws_s3_bucket.processed_zone.arn,
+          "${aws_s3_bucket.processed_zone.arn}/*"
         ]
       }
     ]
   })
 }
 
-# Add CloudWatch logging permissions
-resource "aws_iam_role_policy_attachment" "redshift_cloudwatch" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceNotebookRole"
-  role       = aws_iam_role.redshift_role.name
-}
-
-resource "aws_iam_role_policy" "glue_logging" {
-  name = "GlueLoggingPolicy"
-  role = aws_iam_role.redshift_role.id
+# Additional S3 access policy for Glue
+resource "aws_iam_role_policy" "glue_s3_policy" {
+  name = "GlueS3Policy"
+  role = aws_iam_role.glue_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -92,11 +58,19 @@ resource "aws_iam_role_policy" "glue_logging" {
       {
         Effect = "Allow"
         Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
         ]
-        Resource = ["arn:aws:logs:*:*:*"]
+        Resource = [
+          aws_s3_bucket.raw_zone.arn,
+          "${aws_s3_bucket.raw_zone.arn}/*",
+          aws_s3_bucket.processed_zone.arn,
+          "${aws_s3_bucket.processed_zone.arn}/*",
+          aws_s3_bucket.curated_zone.arn,
+          "${aws_s3_bucket.curated_zone.arn}/*"
+        ]
       }
     ]
   })
