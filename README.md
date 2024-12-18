@@ -68,6 +68,7 @@ This infrastructure is designed for a demo/development environment. For producti
 
 This project is licensed under the terms of the Mozilla Public License 2.0.
 
+
 ## Architecture Diagram
 
 ```mermaid
