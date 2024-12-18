@@ -68,10 +68,14 @@ This infrastructure is designed for a demo/development environment. For producti
 
 This project is licensed under the terms of the Mozilla Public License 2.0.
 
+## Architecture Diagram
+
+```mermaid
 graph TD
     A[Raw Zone<br>S3 Bucket] --> C[Glue Crawler<br>ETL]
-    B[Processed Zone<br>S3 Bucket] --> D[Athena<br>Querying]
-    E[Curated Zone<br>S3 Bucket]
+    C --> B[Processed Zone<br>S3 Bucket]
+    B --> D[Athena<br>Querying]
+    D --> E[Curated Zone<br>S3 Bucket]
     D --> F[CloudWatch<br>Dashboard]
 
     classDef storage fill:#f9f,stroke:#333,stroke-width:2px;
@@ -82,6 +86,7 @@ graph TD
     class C,D compute;
     class F monitoring;
 
-S3 Lifecycle Rules:
+
+## S3 Lifecycle Rules
 - Raw → INTELLIGENT_TIERING (30d) → Expire (90d)
 - Processed → INTELLIGENT_TIERING (60d)
