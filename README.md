@@ -88,6 +88,3 @@ graph TD
     class F monitoring;
 
 
-## S3 Lifecycle Rules
-- Raw → INTELLIGENT_TIERING (30d) → Expire (90d)
-- Processed → INTELLIGENT_TIERING (60d)
