@@ -94,18 +94,23 @@ resource "aws_glue_crawler" "processed_zone" {
 
   s3_target {
     path = "s3://${aws_s3_bucket.processed_zone.id}/nyc-taxi-processed"
-    exclusions = ["**.py"]  # Exclude Python scripts
+    exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
   }
 
   configuration = jsonencode({
     Version = 1.0
     CrawlerOutput = {
       Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
+      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
     }
     Grouping = {
       TableGroupingPolicy = "CombineCompatibleSchemas"
     }
   })
+
+  recrawl_policy {
+    recrawl_behavior = "CRAWL_EVERYTHING"
+  }
 
   schema_change_policy {
     delete_behavior = "LOG"
