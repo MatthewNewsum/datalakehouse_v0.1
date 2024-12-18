@@ -1,23 +1,29 @@
-# Glue Database
+# Raw Zone Database
 resource "aws_glue_catalog_database" "nyc_taxi" {
   name = "nyc_taxi_raw"
 }
 
-# Glue Crawler
+# Processed Zone Database
+resource "aws_glue_catalog_database" "nyc_taxi_processed" {
+  name = "nyc_taxi_processed"
+}
+
+# Raw Zone Crawler
 resource "aws_glue_crawler" "raw_zone" {
   database_name = aws_glue_catalog_database.nyc_taxi.name
   name          = "raw-zone-crawler"
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
-    path = "s3://${aws_s3_bucket.raw_zone.id}/data"
-    exclusions = ["**.py"]
+    path = "s3://${aws_s3_bucket.raw_zone.id}/nyc-taxi"
+    exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
   }
 
   configuration = jsonencode({
     Version = 1.0
     CrawlerOutput = {
       Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
+      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
     }
     Grouping = {
       TableGroupingPolicy = "CombineCompatibleSchemas"
@@ -27,6 +33,42 @@ resource "aws_glue_crawler" "raw_zone" {
   schema_change_policy {
     delete_behavior = "LOG"
     update_behavior = "UPDATE_IN_DATABASE"
+  }
+
+  recrawl_policy {
+    recrawl_behavior = "CRAWL_EVERYTHING"
+  }
+}
+
+# Processed Zone Crawler
+resource "aws_glue_crawler" "processed_zone" {
+  database_name = aws_glue_catalog_database.nyc_taxi_processed.name
+  name          = "processed-zone-crawler"
+  role          = aws_iam_role.glue_role.arn
+
+  s3_target {
+    path = "s3://${aws_s3_bucket.processed_zone.id}/nyc-taxi-processed"
+    exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
+  }
+
+  configuration = jsonencode({
+    Version = 1.0
+    CrawlerOutput = {
+      Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
+      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
+    }
+    Grouping = {
+      TableGroupingPolicy = "CombineCompatibleSchemas"
+    }
+  })
+
+  schema_change_policy {
+    delete_behavior = "LOG"
+    update_behavior = "UPDATE_IN_DATABASE"
+  }
+
+  recrawl_policy {
+    recrawl_behavior = "CRAWL_EVERYTHING"
   }
 }
 
@@ -61,8 +103,6 @@ resource "aws_glue_job" "raw_to_processed" {
     "--source_bucket"          = aws_s3_bucket.raw_zone.id
     "--destination_bucket"     = aws_s3_bucket.processed_zone.id
     "--additional-python-modules" = "boto3==1.26.137"
-    "--source_format"          = "parquet"
-    "--target_format"          = "parquet"
   }
 
   execution_property {
@@ -78,42 +118,5 @@ resource "aws_glue_trigger" "raw_to_processed_trigger" {
 
   actions {
     job_name = aws_glue_job.raw_to_processed.name
-  }
-}
-
-# Add Processed Zone Database 
-resource "aws_glue_catalog_database" "nyc_taxi_processed" {
-  name = "nyc_taxi_processed"
-}
-
-# Add Processed Zone Crawler
-resource "aws_glue_crawler" "processed_zone" {
-  database_name = aws_glue_catalog_database.nyc_taxi_processed.name
-  name          = "processed-zone-crawler"
-  role          = aws_iam_role.glue_role.arn
-
-  s3_target {
-    path = "s3://${aws_s3_bucket.processed_zone.id}/nyc-taxi-processed"
-    exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
-  }
-
-  configuration = jsonencode({
-    Version = 1.0
-    CrawlerOutput = {
-      Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
-      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
-    }
-    Grouping = {
-      TableGroupingPolicy = "CombineCompatibleSchemas"
-    }
-  })
-
-  recrawl_policy {
-    recrawl_behavior = "CRAWL_EVERYTHING"
-  }
-
-  schema_change_policy {
-    delete_behavior = "LOG"
-    update_behavior = "UPDATE_IN_DATABASE"
   }
 }
