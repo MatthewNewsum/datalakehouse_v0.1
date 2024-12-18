@@ -81,7 +81,7 @@ resource "aws_glue_trigger" "raw_to_processed_trigger" {
   }
 }
 
-# Add Processed Zone Database
+# Add Processed Zone Database 
 resource "aws_glue_catalog_database" "nyc_taxi_processed" {
   name = "nyc_taxi_processed"
 }
@@ -93,8 +93,8 @@ resource "aws_glue_crawler" "processed_zone" {
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
-    path = "s3://${aws_s3_bucket.processed_zone.id}/gluetest001"
-    exclusions = ["**.py"]
+    path = "s3://${aws_s3_bucket.processed_zone.id}/nyc-taxi-processed"
+    exclusions = ["**.py"]  # Exclude Python scripts
   }
 
   configuration = jsonencode({
