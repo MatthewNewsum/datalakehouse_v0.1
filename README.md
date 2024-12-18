@@ -71,8 +71,8 @@ This project is licensed under the terms of the Mozilla Public License 2.0.
 
 +------------------+     +--------------------+     +-------------------+
 |                  |     |                    |     |                   |
-|   Raw Zone       |     |  Processed Zone    |     |   Curated Zone   |
-| (S3 Bucket)      |     |   (S3 Bucket)      |     |   (S3 Bucket)    |
+|   Raw Zone       |     |  Processed Zone    |     |   Curated Zone    |
+| (S3 Bucket)      |     |   (S3 Bucket)      |     |   (S3 Bucket)     |
 |                  |     |                    |     |                   |
 +--------+---------+     +---------+----------+     +-------------------+
          |                         |
@@ -80,18 +80,18 @@ This project is licensed under the terms of the Mozilla Public License 2.0.
          v                         v
 +--------+---------+     +--------+---------+
 |                  |     |                  |
-|  Glue Crawler    |     |     Athena      |
-|  (ETL)          |     |   (Querying)     |
+|  Glue Crawler    |     |     Athena       |
+|  (ETL)           |     |   (Querying)     |
 |                  |     |                  |
 +------------------+     +--------+---------+
                                  |
                                  v
-                        +----------------+
-                        |                |
-                        |   CloudWatch   |
-                        |   Dashboard    |
-                        |                |
-                        +----------------+
+                         +----------------+
+                         |                |
+                         |   CloudWatch   |
+                         |   Dashboard    |
+                         |                |
+                         +----------------+
 
 S3 Lifecycle Rules:
 Raw → INTELLIGENT_TIERING (30d) → Expire (90d)
