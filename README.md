@@ -93,6 +93,6 @@ This project is licensed under the terms of the Mozilla Public License 2.0.
                         |                |
                         +----------------+
 
-Lifecycle Rules:
+S3 Lifecycle Rules:
 Raw → INTELLIGENT_TIERING (30d) → Expire (90d)
 Processed → INTELLIGENT_TIERING (60d)
