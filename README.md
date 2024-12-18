@@ -89,5 +89,4 @@ graph TD
     class A,B,E storage;
     class C,D compute;
     class F monitoring;
-
-
+```
