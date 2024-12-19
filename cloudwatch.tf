@@ -22,3 +22,9 @@ resource "aws_cloudwatch_dashboard" "main" {
     ]
   })
 }
+
+# CloudWatch log group for Lambda function
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/apiToS3"
+  retention_in_days = 14
+}
