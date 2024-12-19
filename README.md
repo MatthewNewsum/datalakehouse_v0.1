@@ -1,7 +1,3 @@
-Collecting workspace information
-
-Here's a README.md for your data lakehouse infrastructure project:
-
 # AWS Data Lakehouse Infrastructure
 
 This project implements a modern data lakehouse architecture on AWS using Terraform, consisting of S3 storage zones, Glue for ETL, and Athena for querying.
