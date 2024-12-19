@@ -8,6 +8,8 @@ results/
 .terraform.lock.json
 .terraform.tfstate
 .terraform.tfstate.backup
+terraform.tfstate
+terraform.tfstate.backup
 
 # Dependencies
 node_modules/
