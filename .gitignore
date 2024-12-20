@@ -90,7 +90,6 @@ coverage/
 *.jar
 *.rar
 *.tar
-*.zip
 
 # Database
 *.sqlite
@@ -106,5 +105,9 @@ coverage/
 # Optional REPL history
 .node_repl_history
 
-# General Files
+# General Files and Folders
 notes.idea_modules
+/lambda_package
+lambda_package/
+/lambda_package/
+/lambda_package/*

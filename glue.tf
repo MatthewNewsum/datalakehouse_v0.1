@@ -15,7 +15,7 @@ resource "aws_glue_crawler" "raw_zone" {
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
-    path = "s3://${aws_s3_bucket.raw_zone.id}/nyc-taxi"
+    path       = "s3://${aws_s3_bucket.raw_zone.id}/nyc-taxi"
     exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
   }
 
@@ -23,7 +23,7 @@ resource "aws_glue_crawler" "raw_zone" {
     Version = 1.0
     CrawlerOutput = {
       Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
-      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
+      Tables     = { AddOrUpdateBehavior = "MergeNewColumns" }
     }
     Grouping = {
       TableGroupingPolicy = "CombineCompatibleSchemas"
@@ -47,7 +47,7 @@ resource "aws_glue_crawler" "processed_zone" {
   role          = aws_iam_role.glue_role.arn
 
   s3_target {
-    path = "s3://${aws_s3_bucket.processed_zone.id}/nyc-taxi-processed"
+    path       = "s3://${aws_s3_bucket.processed_zone.id}/nyc-taxi-processed"
     exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
   }
 
@@ -55,7 +55,7 @@ resource "aws_glue_crawler" "processed_zone" {
     Version = 1.0
     CrawlerOutput = {
       Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
-      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
+      Tables     = { AddOrUpdateBehavior = "MergeNewColumns" }
     }
     Grouping = {
       TableGroupingPolicy = "CombineCompatibleSchemas"
@@ -88,7 +88,7 @@ resource "aws_s3_object" "glue_etl_script" {
 resource "aws_glue_job" "raw_to_processed" {
   name     = "raw-to-processed-zone"
   role_arn = aws_iam_role.glue_role.arn
-  
+
   command {
     name            = "glueetl"
     script_location = "s3://${aws_s3_bucket.raw_zone.id}/${aws_s3_object.glue_etl_script.key}"
@@ -96,12 +96,12 @@ resource "aws_glue_job" "raw_to_processed" {
   }
 
   default_arguments = {
-    "--job-language"            = "python"
-    "--continuous-log-logGroup" = "/aws-glue/jobs"
-    "--enable-metrics"          = ""
-    "--TempDir"                = "s3://${aws_s3_bucket.raw_zone.id}/temporary/"
-    "--source_bucket"          = aws_s3_bucket.raw_zone.id
-    "--destination_bucket"     = aws_s3_bucket.processed_zone.id
+    "--job-language"              = "python"
+    "--continuous-log-logGroup"   = "/aws-glue/jobs"
+    "--enable-metrics"            = ""
+    "--TempDir"                   = "s3://${aws_s3_bucket.raw_zone.id}/temporary/"
+    "--source_bucket"             = aws_s3_bucket.raw_zone.id
+    "--destination_bucket"        = aws_s3_bucket.processed_zone.id
     "--additional-python-modules" = "boto3==1.26.137"
   }
 
@@ -114,7 +114,7 @@ resource "aws_glue_job" "raw_to_processed" {
 resource "aws_glue_trigger" "raw_to_processed_trigger" {
   name     = "raw-to-processed-trigger"
   type     = "SCHEDULED"
-  schedule = "cron(0 0 * * ? *)"  # Daily at midnight
+  schedule = "cron(0 0 * * ? *)" # Daily at midnight
 
   actions {
     job_name = aws_glue_job.raw_to_processed.name

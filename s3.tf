@@ -22,6 +22,20 @@ resource "aws_s3_bucket_versioning" "raw_versioning" {
   }
 }
 
+# # Create folder in raw zone bucket
+# resource "aws_s3_object" "raw_zone_cta_folder" {
+#   bucket = "demo-lakehouse-raw-zone"
+#   key    = "cta-data/"
+#   source = "/dev/null"  # Empty object for folder
+# }
+
+# # Create folder in processed zone bucket
+# resource "aws_s3_object" "processed_zone_cta_folder" {
+#   bucket = "demo-lakehouse-processed-zone"
+#   key    = "cta-data/"
+#   source = "/dev/null"  # Empty object for folder
+# }
+
 # Lifecycle rules for raw zone
 resource "aws_s3_bucket_lifecycle_configuration" "raw_lifecycle" {
   bucket = aws_s3_bucket.raw_zone.id
@@ -41,7 +55,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "raw_lifecycle" {
   }
 }
 
-# Similar lifecycle rules for processed and curated zones
+# Lifecycle rules for processed zone
 resource "aws_s3_bucket_lifecycle_configuration" "processed_lifecycle" {
   bucket = aws_s3_bucket.processed_zone.id
 
@@ -55,3 +69,5 @@ resource "aws_s3_bucket_lifecycle_configuration" "processed_lifecycle" {
     }
   }
 }
+
+# Lifecycle rules for curated zone
