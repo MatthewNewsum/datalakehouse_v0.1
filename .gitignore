@@ -110,3 +110,5 @@ coverage/
 notes.idea_modules
 /lambda_package
 lambda_package/
+/lambda_package/
+/lambda_package/*
