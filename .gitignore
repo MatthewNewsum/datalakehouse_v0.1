@@ -114,4 +114,5 @@ lambda_package/
 /lambda_package/*
 =======
 lambda_package/
->>>>>>> b5322f3 (added the Chicago transport data tests)
+/lambda_package/
+/lambda_package/*
