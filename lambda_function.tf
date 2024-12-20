@@ -1,12 +1,12 @@
 # Lambda function API to S3
 resource "aws_lambda_function" "api_to_s3" {
-  filename         = "scripts/api_to_s3.zip"
-  function_name    = "apiToS3"
-  role            = aws_iam_role.apitos3_role.arn
-  handler         = "lambda_function.lambda_handler"
-  runtime         = "python3.13"
-  timeout         = 30
-  memory_size     = 128
+  filename      = "scripts/api_to_s3.zip"
+  function_name = "apiToS3"
+  role          = aws_iam_role.apitos3_role.arn
+  handler       = "lambda_function.lambda_handler"
+  runtime       = "python3.13"
+  timeout       = 30
+  memory_size   = 128
 
   environment {
     variables = {
@@ -17,13 +17,13 @@ resource "aws_lambda_function" "api_to_s3" {
 
 # Lambda function dataCleaning
 resource "aws_lambda_function" "data_cleaning" {
-  filename         = "scripts/dataCleaning.zip"
-  function_name    = "dataCleaning"
-  role            = aws_iam_role.apitos3_role.arn
-  handler         = "lambda_function.lambda_handler"
-  runtime         = "python3.13"
-  timeout         = 30
-  memory_size     = 128
+  filename      = "scripts/data_cleaning.zip"
+  function_name = "dataCleaning"
+  role          = aws_iam_role.apitos3_role.arn
+  handler       = "data_cleaning.lambda_handler"
+  runtime       = "python3.13"
+  timeout       = 30
+  memory_size   = 128
 
   environment {
     variables = {
