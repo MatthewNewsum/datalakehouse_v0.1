@@ -18,7 +18,7 @@ resource "aws_lambda_function" "api_to_s3" {
 # Lambda function dataCleaning
 resource "aws_lambda_function" "data_cleaning" {
   filename      = "scripts/data_cleaning.zip"
-  function_name = "dataCleaning"
+  function_name = "data_cleaning"
   role          = aws_iam_role.apitos3_role.arn
   handler       = "data_cleaning.lambda_handler"
   runtime       = "python3.13"
