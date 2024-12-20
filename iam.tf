@@ -76,9 +76,9 @@ resource "aws_iam_role_policy" "glue_s3_policy" {
   })
 }
 
-# IAM role for API to S3 Lambda function
-resource "aws_iam_role" "lambda_role" {
-  name = "cta_data_collector_role"
+# IAM role for apiToS3 Lambda function
+resource "aws_iam_role" "apitos3_role" {
+  name = "apiToS3-role-3yrkgyi3"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -92,28 +92,35 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-# S3 policy API to S3 Lambda function
-resource "aws_iam_role_policy" "lambda_s3_policy" {
-  name = "cta_data_collector_s3_policy"
-  role = aws_iam_role.lambda_role.id
+# # Custom policy for CloudWatch Logs
+# resource "aws_iam_role_policy" "apitos3_cloudwatch" {
+#   name = "AWSLambdaBasicExecutionRole-e89d77b3-20ed-496b-b116-d0d221ab2ffb"
+#   role = aws_iam_role.apitos3_role.name
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "s3:PutObject",
-        "s3:GetObject"
-      ],
-      Resource = [
-        "arn:aws:s3:::demo-lakehouse-raw-zone/cta-data/*"
-      ]
-    }]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = "logs:CreateLogGroup"
+#         Resource = "arn:aws:logs:us-east-1:841162683310:*"
+#       },
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "logs:CreateLogStream",
+#           "logs:PutLogEvents"
+#         ]
+#         Resource = [
+#           "arn:aws:logs:us-east-1:841162683310:log-group:/aws/lambda/apiToS3:*"
+#         ]
+#       }
+#     ]
+#   })
+# }
 
-# CloudWatch Logs policy API to S3 Lambda function
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+# Attach AmazonS3FullAccess managed policy
+resource "aws_iam_role_policy_attachment" "apitos3_s3_full_access" {
+  role       = aws_iam_role.apitos3_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
