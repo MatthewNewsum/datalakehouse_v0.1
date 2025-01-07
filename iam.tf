@@ -92,32 +92,32 @@ resource "aws_iam_role" "apitos3_role" {
   })
 }
 
-# # Custom policy for CloudWatch Logs
-# resource "aws_iam_role_policy" "apitos3_cloudwatch" {
-#   name = "AWSLambdaBasicExecutionRole-e89d77b3-20ed-496b-b116-d0d221ab2ffb"
-#   role = aws_iam_role.apitos3_role.name
+# Custom policy for CloudWatch Logs
+resource "aws_iam_role_policy" "apitos3_cloudwatch" {
+  name = "AWSLambdaBasicExecutionRole-e89d77b3-20ed-496b-b116-d0d221ab2ffb"
+  role = aws_iam_role.apitos3_role.name
 
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Action = "logs:CreateLogGroup"
-#         Resource = "arn:aws:logs:us-east-1:841162683310:*"
-#       },
-#       {
-#         Effect = "Allow"
-#         Action = [
-#           "logs:CreateLogStream",
-#           "logs:PutLogEvents"
-#         ]
-#         Resource = [
-#           "arn:aws:logs:us-east-1:841162683310:log-group:/aws/lambda/apiToS3:*"
-#         ]
-#       }
-#     ]
-#   })
-# }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "logs:CreateLogGroup"
+        Resource = "arn:aws:logs:us-east-1:841162683310:*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = [
+          "arn:aws:logs:us-east-1:841162683310:log-group:/aws/lambda/apiToS3:*"
+        ]
+      }
+    ]
+  })
+}
 
 # Attach AmazonS3FullAccess managed policy
 resource "aws_iam_role_policy_attachment" "apitos3_s3_full_access" {
