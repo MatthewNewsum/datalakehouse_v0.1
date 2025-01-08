@@ -14,6 +14,31 @@ resource "aws_s3_bucket" "curated_zone" {
   bucket = "demo-lakehouse-curated-zone"
 }
 
+resource "aws_s3_bucket" "lambda_code" {
+  bucket = "demo-lakehouse-lambda-code"
+}
+
+# S3 objects for Lambda code
+resource "aws_s3_object" "api_to_s3_code" {
+  bucket = aws_s3_bucket.lambda_code.id
+  key    = "lambda/api_to_s3.zip"
+  source = "scripts/api_to_s3.zip"
+}
+
+resource "aws_s3_object" "data_cleaning_code" {
+  bucket = aws_s3_bucket.lambda_code.id
+  key    = "lambda/data_cleaning.zip"
+  source = "scripts/data_cleaning.zip"
+
+
+
+# # Create a scripts folder in the lambda_code bucket
+# resource "aws_s3_object" "scripts_folder" {
+#   bucket = aws_s3_bucket.lambda_code.id
+#   key    = "scripts/"
+#   source = "/dev/null"
+}
+
 # Enable versioning and lifecycle rules for all buckets
 resource "aws_s3_bucket_versioning" "raw_versioning" {
   bucket = aws_s3_bucket.raw_zone.id
@@ -21,6 +46,8 @@ resource "aws_s3_bucket_versioning" "raw_versioning" {
     status = "Enabled"
   }
 }
+
+
 
 # # Create folder in raw zone bucket
 # resource "aws_s3_object" "raw_zone_cta_folder" {

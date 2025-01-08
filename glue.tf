@@ -1,3 +1,40 @@
+# CTA Database
+resource "aws_glue_catalog_database" "cta_database" {
+  name = "cta_database"
+}
+
+# CTA Data Crawler
+resource "aws_glue_crawler" "cta_crawler" {
+  database_name = aws_glue_catalog_database.cta_database.name
+  name          = "cta_crawler"
+  role          = aws_iam_role.glue_role.arn
+
+  s3_target {
+    path       = "s3://${aws_s3_bucket.processed_zone.id}/cta-data"
+    exclusions = ["**.py", "**/_SUCCESS", "**/.DS_Store"]
+  }
+
+  configuration = jsonencode({
+    Version = 1.0
+    CrawlerOutput = {
+      Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
+      Tables     = { AddOrUpdateBehavior = "MergeNewColumns" }
+    }
+    Grouping = {
+      TableGroupingPolicy = "CombineCompatibleSchemas"
+    }
+  })
+
+  schema_change_policy {
+    delete_behavior = "LOG"
+    update_behavior = "UPDATE_IN_DATABASE"
+  }
+
+  recrawl_policy {
+    recrawl_behavior = "CRAWL_EVERYTHING"
+  }
+}
+
 # Raw Zone Database
 resource "aws_glue_catalog_database" "nyc_taxi" {
   name = "nyc_taxi_raw"
