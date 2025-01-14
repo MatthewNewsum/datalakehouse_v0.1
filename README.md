@@ -39,6 +39,19 @@ CloudWatch dashboard provides metrics for:
 - Terraform v1.5.7 or later
 - AWS account with permissions to create required resources
 
+## Security Features
+- IMDSv2 enabled
+- Encrypted EBS volumes
+- Security group with minimal access
+- IAM roles with least privilege
+
+## Variables
+| Name | Description | Default |
+|------|-------------|---------|
+| instance_type | EC2 instance size | t2.small |
+| environment | Deployment environment | dev |
+| aws_region | AWS region | us-east-1 |
+
 ## Usage
 
 Initialize Terraform:
