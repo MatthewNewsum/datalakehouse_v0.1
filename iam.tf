@@ -101,8 +101,8 @@ resource "aws_iam_role_policy" "apitos3_cloudwatch" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
-        Action = "logs:CreateLogGroup"
+        Effect   = "Allow"
+        Action   = "logs:CreateLogGroup"
         Resource = "arn:aws:logs:us-east-1:841162683310:*"
       },
       {

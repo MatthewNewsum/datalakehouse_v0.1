@@ -1,6 +1,6 @@
 # Lambda function API to S3
 resource "aws_lambda_function" "api_to_s3" {
-#   filename      = "scripts/api_to_s3.zip"
+  #   filename      = "scripts/api_to_s3.zip"
   s3_bucket     = aws_s3_bucket.lambda_code.id
   s3_key        = aws_s3_object.api_to_s3_code.key
   function_name = "apiToS3"

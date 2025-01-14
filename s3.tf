@@ -32,11 +32,11 @@ resource "aws_s3_object" "data_cleaning_code" {
 
 
 
-# # Create a scripts folder in the lambda_code bucket
-# resource "aws_s3_object" "scripts_folder" {
-#   bucket = aws_s3_bucket.lambda_code.id
-#   key    = "scripts/"
-#   source = "/dev/null"
+  # # Create a scripts folder in the lambda_code bucket
+  # resource "aws_s3_object" "scripts_folder" {
+  #   bucket = aws_s3_bucket.lambda_code.id
+  #   key    = "scripts/"
+  #   source = "/dev/null"
 }
 
 # Enable versioning and lifecycle rules for all buckets
