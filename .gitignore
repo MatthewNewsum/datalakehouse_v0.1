@@ -116,3 +116,5 @@ lambda_package/
 lambda_package/
 /lambda_package/
 /lambda_package/*
+*pem
+*.pem

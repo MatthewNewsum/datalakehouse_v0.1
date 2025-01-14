@@ -24,11 +24,11 @@ resource "aws_instance" "powerbi_gateway" {
   vpc_security_group_ids = [aws_security_group.powerbi_gateway.id]
 
 
-metadata_options {
+  metadata_options {
     http_endpoint = "enabled"
-    http_tokens   = "required"  # This enforces IMDSv2
+    http_tokens   = "required" # This enforces IMDSv2
   }
-  
+
   root_block_device {
     volume_size = 100
     volume_type = "gp3"
